@@ -85,32 +85,42 @@ def DelPressuredelT(rho, T):
 # =============================================================================
 # kappa definitions
 # =============================================================================
+kappaH = []
+kappaes = []
+kappaf =[]
 
 # Kappa H-
 def kappaHminus(rho, T):
     rho3 = rho / 1e3
-    return 2.5e-32 * (Z / 0.02) * (rho3 ** 0.5) * (T ** 9)
+    kappa = 2.5e-32 * (Z / 0.02) * (rho3 ** 0.5) * (T ** 9)
+
+    return kappa
 
 
 # Kappa ff
 def Kappaff(rho, T):
     rho3 = rho / 1e3
-    return 1e24 * (Z + 0.0001) * (rho3 ** 0.7) * (T ** -3.5)
+    kappa = 1e24 * (Z + 0.0001) * (rho3 ** 0.7) * (T ** -3.5)
+    
+    return kappa
 
 
 # kappa es
 def Kappaes():
-    return 0.02 * (1 + X)
+    kappa = 0.02 * (1 + X)
+    
+    return kappa
 
 
 # the real slim kappa
 def Kappa(rho, T):
     term1 = 1 / kappaHminus(rho, T)
     if T > 1e4:
-        term2 = 1 / max(
-            [Kappaff(rho, T), Kappaes()])  # max fn take itterale and returns largest, so i put the kappas in a list
+        term2 = 1 / max(Kappaff(rho, T), Kappaes())  # max fn take itterale and returns largest, so i put the kappas in a list
     else:
-        term2 = 1 / min([Kappaff(rho, T), Kappaes()])
+        term2 = 1 / min(Kappaff(rho, T), Kappaes())
+    
+
     return 1 / (term1 + term2)
 
 
@@ -270,10 +280,10 @@ def CheckToStop(rho, T, M, drho):
     deltaTau = kappa * rho ** 2 / abs(drho)
     # print(deltaTau)
     if deltaTau < 0.01:  # @@@@@@@@this is just a placeholder!!!!@@@@@@@
-        return False
+        return False, deltaTau
 
     if M > 1e3 * M_s:
-        return False
+        return False, deltaTau
 
     return True, deltaTau
 
@@ -359,6 +369,11 @@ def RK45(r_0, h_0, vals, minError, maxError, hmin, hmax, abort):
             dL.append(derivitaves[3])
             
             r.append(r[i] + h)
+
+            #kappaH.append(kappaHminus(rho, T))
+            #kappaes.append(Kappaea())
+            #kappaf.append(kappaff(rho, T))
+
             i += 1
 
             errorList.append(error)
@@ -388,10 +403,14 @@ def RK45(r_0, h_0, vals, minError, maxError, hmin, hmax, abort):
 
 
 # we  need to define our initial parameters, 
-    
+rs = 0.865*R_s 
+ms = 0.673*M_s
+ls = 5.86e-2*L_s  
+ts = 3056
+
 r_0 = 1
-rho_c = 1.622e5 # Correct rho for sun
-T_c = 1.571e7  # idx1: T
+rho_c = 585600 # Correct rho for sun
+T_c = 8.23e6  # idx1: T
 M_0 = 4 * np.pi * r_0 ** 3 * rho_c / 3  # idx2: M
 L_0 = 4 * np.pi * r_0 ** 3 * rho_c * Epsilon(rho_c, T_c) / 3  # idx3: L
 tau_0 = 0.231739  # possible value 1 from OPAL TABLE
@@ -405,25 +424,49 @@ values[3] = L_0             # idx3: L
 values[4] = tau_0           # idx4: tau
 
 
-vals, r, stepsize, errors, dL, kappa = RK45(1, 1, values, 0.02, 0.5, 1, 5000, 1e20)
+vals, r, stepsize, errors, dL, kappa = RK45(1, 100, values, 0.02, 0.5, 100000, 500000, 1e5)
 #@@@@@@@ Abort variable must be greater then and divisible by 10000 @@@@@@
 
+vals = vals[:,:len(r)]
+#errors.append(errors[-1])
 
+r = np.array(r)
+print(r)
+R =r/np.max(r)
 
-fig, axs = plt.subplots(2, 3, sharex=True, frameon=False, figsize=(10, 5))
-axs[0, 0].plot(r, vals[0, :]/rho_c, 'k-')
+fig, axs = plt.subplots(3, 3, sharex=True, frameon=False, figsize=(10, 5))
+
+plt.xlim(0, 1)
+
+axs[0, 0].plot(R, vals[0, :]/rho_c, 'k-')
 axs[0, 0].set_title('Density (rho/rho_c)', fontsize=8)
-axs[0, 1].plot(r, vals[1, :]/T_c, 'k-')
+
+axs[0, 1].plot(R, vals[1, :]/T_c, 'k-')
 axs[0, 1].set_title('Temperature (T/T_c)', fontsize=8)
-axs[0, 2].plot(r, vals[2, :]/M_0, 'k-')
+
+axs[0, 2].plot(R, vals[2, :]/ms, 'k-')
 axs[0, 2].set_title('Mass (M/M_0)', fontsize=8)
-axs[1, 0].plot(r, dL, 'k-')
-axs[1, 0].set_title('Derivitave of Luminosity', fontsize=8)
-axs[1, 1].plot(r, kappa, 'k-')
-axs[1, 1].set_title('Kappa', fontsize=8)
-axs[1, 1].set_yscale('log')
-axs[1, 2].plot(r, stepsize, 'k-')
-axs[1, 2].set_title('Stepsize', fontsize=8)
+
+axs[1, 0].plot(R, vals[3, :]/ls, 'k-')
+axs[1, 0].set_title('Luminosity (L/L_0)', fontsize=8)
+
+axs[1, 1].plot(R, vals[4, :], 'k-')
+axs[1, 1].set_title('Tau', fontsize=8)
+
+axs[1, 2].plot(R, dL, 'k-')
+axs[1, 2].set_title('Derivitave of Luminosity', fontsize=8)
+
+axs[2, 0].plot(R, kappa, 'k-')
+axs[2, 0].set_title('Kappa', fontsize=8)
+
+axs[2, 1].set_yscale('log')
+axs[2, 1].plot(R, stepsize, 'k-')
+axs[2, 1].set_title('Stepsize', fontsize=8)
+
+#axs[2, 2].plot(R, kappaH, 'k-')
+#axs[2, 2].plot(R, kappaes, 'b-')
+#axs[2, 2].plot(R, kappaf, 'r')
+#axs[2, 2].set_title('Kappa Comps', fontsize=8)
 
 #plt.xscale('log')
 
