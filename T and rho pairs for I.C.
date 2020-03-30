@@ -1,0 +1,77 @@
+What densities are needed for which temperatures:
+
+LOW MASS STAR AVERY GAVE US:
+Expected result:
+
+T_c = 1e5
+rho_c = 2e8
+Initial error = 0.06
+
+What we get:
+Initial error = -6730883.39
+
+Big error! 
+
+
+Values of T and rho that give an immediate error small enough (to reduce runtime):
+
+T_c = 1e5
+rho_c = 2e8
+Initial error = 0.06
+
+T_c = 2e5
+rho_c = 3.8e7
+
+T_c = 3e5
+rho_c = 1.5e7
+Initial error = 0.08
+
+T_c = 4e5
+rho_c = 7e6
+Initial error = -0.04
+
+T_c = 5e5
+rho_c = 5.5e6
+Initial error = -0.006
+
+T_c = 6e5
+rho_c = 3.5e6
+Initial error = 0.03
+
+T_c = 7e5
+rho_c = 2.5e6
+Initial error = 0.04
+
+T_c = 8e5
+rho_c = 1.9e6
+Initial error = 0.02
+
+T_c = 9e5
+rho_c = 1.7e6
+Initial error = 0.08
+
+T_c = 1e6
+rho_c = 1.4e6
+Initial error = 0.003
+
+T_c = 2e6
+rho_c = 9e5
+Initial error = -0.06
+
+T_c = 3e6
+rho_c = 8e5
+Initial error = -0.05
+
+T_c = 5e6
+rho_c = 6.3e5
+Initial error = -0.09
+
+T_c = 7e6
+rho_c = 5.4e5
+Initial error = 0.03
+
+T_c = 9e6
+rho_c = 4.5e5
+Initial error = -0.006
+
+Around this point the error starts diverging and the code runs much slower.
