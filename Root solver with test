@@ -1,0 +1,51 @@
+def f(x,y,z):
+    return x**3,1,2
+    
+# a bisection solver for our function, noting that it only works with values 
+def BisectionRootSolver(negativeEnd,positiveEnd,centralTemp,inputs,precision):
+    rho_Converge_Catch = 1 # if the endpoints are 1 kg/m^3 away from eachothre, its not gona converge
+    maxItterations = 50
+    bestSolution = [500,0,0]
+    i = 0
+    while i < maxItterations:
+        print(i)
+#        lowerLdif, vals, r = RunRK45ToGetL(negativeEnd,inputs,centralTemp)
+#        upperLdif, vals, r = RunRK45ToGetL(positiveEnd,inputs,centralTemp)
+        
+        lowerLdif, vals, r =f(negativeEnd,1,1)
+        upperLdif, vals, r =f(positiveEnd,1,1)
+        if lowerLdif * upperLdif > 0:
+            print ( 'no solution in given range')
+            return
+        
+        Endpointdif = abs(negativeEnd - positiveEnd )/ 2
+        halfWayPoint = (negativeEnd + positiveEnd )/ 2
+        
+        #middleL, vals, r = RunRK45ToGetL(halfWayPoint,inputs,centralTemp)
+        middleL, vals, r = f(halfWayPoint,1,1)
+        
+        
+        if middleL< bestSolution[0]:
+            bestSolution = [middleL, vals, r]
+        
+        if Endpointdif <  rho_Converge_Catch or abs(middleL) < precision:
+            print(middleL)
+            return vals, r
+        
+        elif lowerLdif * middleL < 0:
+           positiveEnd = halfWayPoint 
+           i+=1
+           
+        elif upperLdif * middleL < 0:
+            negativeEnd = halfWayPoint 
+            i+=1
+            
+        else:
+            print("No solution found")
+            return False
+        
+    print ('maximum itterations reached: Optimal solution returned')
+    return bestSolution
+
+print(BisectionRootSolver(-50,100,1,1,0.01))
+    
