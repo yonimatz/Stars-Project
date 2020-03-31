@@ -54,17 +54,16 @@ currentdir = os.getcwd()
 
 
 def read_dat(dir):
-    write_dir = "{}\\testdata.txt".format(dir)
-    #data=pd.read_csv(write_dir)
-    #print(data)
-    #data.to_csv('{}\\testdata.csv'.format(dir), index=None)
-    #newdir="{}\\testdata.csv".format(dir)
-    #newdata=pd.read_csv(newdir)
-    #print(newdata)
+    write_dir = "{}\\testdata.csv".format(dir)
 
-    data = pd.read_csv(write_dir, sep="     ", header=None)
-    data.columns = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "ab", "ac", "ad", "ae", "af", "ag"]
+    data = pd.read_csv(write_dir)
+    #data.columns = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "ab", "ac", "ad", "ae", "af", "ag"]
     print(data)
+    print(data["d"][23])
+    print(data["d"][24])
+    print(data["d"][25])
+    print(data["d"][26])
+    print(data["c"][3])
     return
 
 read_dat(currentdir)

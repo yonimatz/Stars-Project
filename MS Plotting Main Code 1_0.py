@@ -1,4 +1,4 @@
-""
+"""
 Created on Fri Mar 20 22:59:31 2020
 @author: matthewsmith
 """
@@ -430,7 +430,7 @@ rho_c_list = rho_c_list + rho_c_list_extension + rho_c_list_extension_2 + rho_c_
 #
 # rho_c_list = [3e09, 2e9, 1e9]
 
-filename = 'Stars_1_main_extended_100stars.csv'
+filename = 'Stars_2_main_extended_100stars.csv'
 title = 'L (row 1), T (row 2), M (row 3), R (row 4), T_c (row 5), rho_c (row 6), tau_0 = 0.231739, X = 0.738, Y = 0.249'
 X = 0.738
 Y = 0.249
