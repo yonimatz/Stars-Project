@@ -50,20 +50,21 @@ mu = 1 / (2 * X + 0.75 * Y + 0.5 * Z)
 # =============================================================
 
 currentdir = os.getcwd()
-
+len_files = print(len(os.listdir(os.getcwd())))
 
 
 def read_dat(dir):
-    write_dir = "{}\\testdata.csv".format(dir)
+    for i in range(0,len_files):
+        write_dir = "{}\data\Stars_{}_main_extended_100stars.csv".format(dir,i)
 
-    data = pd.read_csv(write_dir)
-    #data.columns = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "ab", "ac", "ad", "ae", "af", "ag"]
-    print(data)
-    print(data["d"][23])
-    print(data["d"][24])
-    print(data["d"][25])
-    print(data["d"][26])
-    print(data["c"][3])
+         = pd.read_csv(write_dir)
+
+
+    print(data['M'])
+    print(list(data.columns.values))
+
     return
 
 read_dat(currentdir)
+
+#def plotter(xdat,ydat,title,ytit,xtit,multiplt)

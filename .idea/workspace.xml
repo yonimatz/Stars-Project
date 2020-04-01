@@ -67,7 +67,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MS Plotting Main Code 1_0.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/plotter_ym.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -108,7 +108,7 @@
       <workItem from="1585516806256" duration="33000" />
       <workItem from="1585516865583" duration="14478000" />
       <workItem from="1585683199579" duration="2833000" />
-      <workItem from="1585688183151" duration="2417000" />
+      <workItem from="1585688183151" duration="9498000" />
     </task>
     <servers />
   </component>
@@ -124,10 +124,10 @@
       <screen x="0" y="0" width="1834" height="991" />
     </state>
     <state x="510" y="155" key="#Notifications/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1584888746189" />
-    <state x="372" y="152" width="1089" height="705" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585688303743">
+    <state x="372" y="152" width="1089" height="705" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585698151779">
       <screen x="0" y="0" width="1834" height="991" />
     </state>
-    <state x="372" y="152" width="1089" height="705" key="#com.intellij.execution.impl.EditConfigurationsDialog/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585688303743" />
+    <state x="372" y="152" width="1089" height="705" key="#com.intellij.execution.impl.EditConfigurationsDialog/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585698151779" />
     <state x="671" y="333" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1584888803652">
       <screen x="0" y="0" width="1834" height="991" />
     </state>
@@ -140,26 +140,26 @@
       <screen x="0" y="0" width="1834" height="991" />
     </state>
     <state x="698" y="252" key="FileChooserDialogImpl/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585516914969" />
-    <state width="1776" height="291" key="GridCell.Tab.0.bottom" timestamp="1585688602325">
-      <screen x="0" y="0" width="1834" height="991" />
+    <state width="1333" height="287" key="GridCell.Tab.0.bottom" timestamp="1585719634559">
+      <screen x="-1920" y="117" width="1376" height="733" />
     </state>
-    <state width="1333" height="202" key="GridCell.Tab.0.bottom/-1920.117.1376.733/0.0.1834.991@-1920.117.1376.733" timestamp="1585665308492" />
-    <state width="1776" height="291" key="GridCell.Tab.0.bottom/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585688602325" />
-    <state width="1776" height="291" key="GridCell.Tab.0.center" timestamp="1585688602325">
-      <screen x="0" y="0" width="1834" height="991" />
+    <state width="1333" height="287" key="GridCell.Tab.0.bottom/-1920.117.1376.733/0.0.1834.991@-1920.117.1376.733" timestamp="1585719634559" />
+    <state width="1776" height="291" key="GridCell.Tab.0.bottom/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585718924631" />
+    <state width="1333" height="287" key="GridCell.Tab.0.center" timestamp="1585719634559">
+      <screen x="-1920" y="117" width="1376" height="733" />
     </state>
-    <state width="1333" height="202" key="GridCell.Tab.0.center/-1920.117.1376.733/0.0.1834.991@-1920.117.1376.733" timestamp="1585665308492" />
-    <state width="1776" height="291" key="GridCell.Tab.0.center/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585688602325" />
-    <state width="1776" height="291" key="GridCell.Tab.0.left" timestamp="1585688602324">
-      <screen x="0" y="0" width="1834" height="991" />
+    <state width="1333" height="287" key="GridCell.Tab.0.center/-1920.117.1376.733/0.0.1834.991@-1920.117.1376.733" timestamp="1585719634559" />
+    <state width="1776" height="291" key="GridCell.Tab.0.center/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585718924631" />
+    <state width="1333" height="287" key="GridCell.Tab.0.left" timestamp="1585719634559">
+      <screen x="-1920" y="117" width="1376" height="733" />
     </state>
-    <state width="1333" height="202" key="GridCell.Tab.0.left/-1920.117.1376.733/0.0.1834.991@-1920.117.1376.733" timestamp="1585665308492" />
-    <state width="1776" height="291" key="GridCell.Tab.0.left/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585688602324" />
-    <state width="1776" height="291" key="GridCell.Tab.0.right" timestamp="1585688602325">
-      <screen x="0" y="0" width="1834" height="991" />
+    <state width="1333" height="287" key="GridCell.Tab.0.left/-1920.117.1376.733/0.0.1834.991@-1920.117.1376.733" timestamp="1585719634559" />
+    <state width="1776" height="291" key="GridCell.Tab.0.left/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585718924630" />
+    <state width="1333" height="287" key="GridCell.Tab.0.right" timestamp="1585719634559">
+      <screen x="-1920" y="117" width="1376" height="733" />
     </state>
-    <state width="1333" height="202" key="GridCell.Tab.0.right/-1920.117.1376.733/0.0.1834.991@-1920.117.1376.733" timestamp="1585665308492" />
-    <state width="1776" height="291" key="GridCell.Tab.0.right/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585688602325" />
+    <state width="1333" height="287" key="GridCell.Tab.0.right/-1920.117.1376.733/0.0.1834.991@-1920.117.1376.733" timestamp="1585719634559" />
+    <state width="1776" height="291" key="GridCell.Tab.0.right/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1585718924631" />
     <state x="426" y="139" key="SettingsEditor" timestamp="1584888446165">
       <screen x="0" y="0" width="1834" height="991" />
     </state>
@@ -172,10 +172,10 @@
       <screen x="0" y="0" width="1834" height="991" />
     </state>
     <state x="737" y="414" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/-1920.117.1376.733/0.0.1834.991@0.0.1834.991" timestamp="1584890083754" />
-    <state x="253" y="69" width="1041" height="815" key="dock-window-1" timestamp="1585676553265">
+    <state x="292" y="186" width="975" height="650" maximized="true" key="dock-window-1" timestamp="1585719275938">
       <screen x="0" y="0" width="1834" height="991" />
     </state>
-    <state x="253" y="69" width="1041" height="815" key="dock-window-1/-1920.117.1376.733/0.0.1834.991@-1920.117.1376.733" timestamp="1585676553265" />
+    <state x="292" y="186" width="975" height="650" maximized="true" key="dock-window-1/-1920.117.1376.733/0.0.1834.991@-1920.117.1376.733" timestamp="1585719275938" />
     <state x="40" y="266" width="1078" height="487" key="dock-window-2" timestamp="1585679175698">
       <screen x="0" y="0" width="1834" height="991" />
     </state>
@@ -183,6 +183,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Stars_Project$constants.coverage" NAME="plotter_ym Coverage Results" MODIFIED="1585665308487" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Stars_Project$plotter_ym.coverage" NAME="plotter_ym Coverage Results" MODIFIED="1585688602317" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Stars_Project$plotter_ym.coverage" NAME="plotter_ym Coverage Results" MODIFIED="1585719634555" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
