@@ -1,0 +1,477 @@
+
+"""
+Created on Fri Mar 20 22:59:31 2020
+@author: matthewsmith
+Edited by susherov
+"""
+import numpy as np
+import matplotlib.pyplot as plt
+import time
+start_time = time.time()
+
+
+# Questions
+# do i need ot add a minimum  to the 'kappa' function? or is that implied in his given eqn im not sure
+# =============================================================================
+# Defining constants
+# =============================================================================
+
+G = 6.674e-11  # Gravitational Constant
+c = 2.998e8  # Speed of light
+hbar = 6.626e-34 / (2 * np.pi)
+k = 1.381e-23  # Boltzmann Constant
+sigma = 5.670e-8  # Stefan-Boltzmann Constant
+m_e = 9.109e-31  # Electron mass
+M_s = 1.989e30  # Mass of Sun
+R_s = 6.963e8  # Radius of Sun
+L_s = 3.828e26  # Luminosity of Sun
+m_p = 1.6726219e-27  # Mass of proton
+a = 4 * sigma /  c
+pi = np.pi
+gamma = 7 / 3  # ideal gas constant
+
+# =================Defining mu, XYZ=====================================
+X = 0.7
+Y = 0.266
+Z = 1.0 - (X + Y) 
+mu = 1.0 / (2.0 * X + 0.75 * Y + 0.5 * Z)
+# mu = mean molecular weight for fully ionized gas
+
+# =============================================================================
+# Pressure equations
+# =============================================================================
+def Pressure(rho, T):
+    const1 = (((3.0 * pi ** 2.0) ** (2.0 / 3.0)) / 5.0) * ((hbar ** 2.0) / m_e)
+    term1 = const1 * (rho / m_p) ** (5.0 / 3.0)
+
+    const2 = k / (mu * m_p)
+    term2 = const2 * rho * T
+
+    const3 = a / 3.0
+    term3 = const3 * (T ** 4.0)
+ 
+    return term1 + term2 + term3
+
+# Partial derivative of pressure w.r.t density
+def DelPressureDelrho(rho, T):
+    const1 = (((3.0 * pi ** 2.0) ** (2.0 / 3.0)) / 3.0) * ((hbar ** 2.0) / (m_e * m_p))
+    term1 = const1 * (rho / m_p) ** (2.0 / 3.0)
+ 
+    const2 = k / (mu * m_p)
+    term2 = T * const2
+   
+    return term1 + term2
+
+# Partial derivitave of pressure w.r.t temperature
+def DelPressuredelT(rho, T):
+    const1 = k / (mu * m_p)
+    term1 = rho * const1
+
+    const2 = 4.0 * a / 3.0
+    term2 = const2 * (T ** 3.0)
+
+    return term1 + term2
+
+# =============================================================================
+# kappa definitions
+# =============================================================================
+
+# Kappa H-
+def kappaHminus(rho, T):
+    rho3 = rho / 1.0e3
+    return 2.5e-32 * (Z / 0.02) * (rho3 ** 0.5) * (T ** 9.0)
+
+
+
+# Kappa ff
+def Kappaff(rho, T):
+    rho3 = rho / 1.0e3
+    return 1.0e24 * (Z + 0.0001) * (rho3 ** 0.7) * (T ** -3.5)
+
+
+# kappa es
+def Kappaes():
+    return 0.02 * (1.0 + X)
+
+# the real slim kappa
+def Kappa(rho, T):
+    term1 = 1.0 / kappaHminus(rho, T)
+
+    term2 = 1.0 / max([Kappaff(rho, T), Kappaes()])  # max fn take itterale and returns largest, so i put the kappas in a list
+
+    return 1.0 / (term1 + term2)
+
+
+# =============================================================================
+# Energy generation epsilon
+# =============================================================================
+
+def EpsilonPP(rho, T):
+    rho5 = rho / 1.0e5
+    T6 = T / 1.0e6
+    return 1.07e-7 * rho5 * (X ** 2.0) * T6 ** 4.0
+
+
+def EpsilonCNO(rho, T):
+    rho5 = rho / 1.0e5
+    T6 = T / 1.0e6
+
+    Xcno = 0.03 * X
+    return 8.24e-26 * rho5 * X * Xcno * (T6 ** 19.9)
+
+
+def Epsilon(rho, T):
+
+    return EpsilonPP(rho, T) + EpsilonCNO(rho, T)
+
+
+# =============================================================================
+# The Big 5 Equations
+# =============================================================================
+# 1) Partial derivative of rho w.r.t radius
+
+def DRhoDr(r, rho, M, kappa, DelPDelrho, DelPressuredelT, DTempDr):
+    term1 =  (G * M * rho) / (r ** 2.0)
+    
+    term2 = DelPressuredelT * DTempDr
+
+    return - 1.0 * (term1 + term2) / DelPDelrho
+
+
+# 2) Derivitave of Temperature w.r.t radius
+def DTDr(r, rho, T, L, M, kappa, P):
+    const1 = 3.0 / (16.0 * pi * a * c)
+
+    term1 = (const1 * rho * kappa * L) / ((T ** 3.0) * (r ** 2.0))
+
+    const2 = (1.0 - (1.0 / gamma)) * G
+    term2 = const2 * (T * M * rho) / (P * (r ** 2.0))
+
+    return -1.0 * min([term1, term2])
+
+
+# 3) Derivative of Mass w.r.t radius
+def DMDr(r, rho):
+    return 4.0 * pi * (r ** 2.0) * rho
+
+
+# 4) Derivative of Luminosity w.r.t radius
+def DLDr(r, rho, epsilon):
+    return 4.0 * pi * (r ** 2.0) * rho * epsilon
+
+
+# 5) Derivative of optical depth w.r.t radius
+def DTauDr(kappa, rho):
+    return kappa * rho
+
+
+
+# =============================================================================
+# Runge Kutta
+# =============================================================================
+# For runge kutta Solving for K values
+
+
+# Runge-Kutta-K 2's-RVal
+RKK2R = 2.500000000000000e-01  #  1/4
+# ...
+RKK3R = 3.750000000000000e-01  #  3/8
+RKK4R = 9.230769230769231e-01  #  12/13
+RKK5R = 1.000000000000000e+00  #  1
+RKK6R = 5.000000000000000e-01  #  1/2
+
+# Runge-Kukka-K 2's- K1val
+RK21 =  2.500000000000000e-01   #  1/4
+
+# Runge-Kukka-K 3's- K1val
+RK31 =  9.375000000000000e-02   #  3/32
+# Runge-Kukka-K 3's- K2val
+RK32 =  2.812500000000000e-01   #  9/32
+
+RK41 =  8.793809740555303e-01   #  1932/2197
+RK42 = -3.277196176604461e+00  # -7200/2197
+RK43 =  3.320892125625853e+00   #  7296/2197
+
+RK51 =  2.032407407407407e+00   #  439/216
+RK52 = -8.000000000000000e+00  # -8
+RK53 =  7.173489278752436e+00   #  3680/513
+RK54 = -2.058966861598441e-01  # -845/4104
+
+RK61 = -2.962962962962963e-01  # -8/27
+RK62 =  2.000000000000000e+00   #  2
+RK63 = -1.381676413255361e+00  # -3544/2565
+RK64 =  4.529727095516569e-01   #  1859/4104
+RK65 = -2.750000000000000e-01  # -11/40
+
+# constants for summing all x together
+
+# Runge-Kukka-4thorder-X- K1val
+RK4X1 = 1.157407407407407e-01  #  25/216
+RK4X3 = 5.489278752436647e-01  #  1408/2565
+RK4X4 = 5.353313840155945e-01  #  2197/4104
+RK4X5 = -2.00000000000000e-01 # -1/5
+
+RK5X1 = 1.185185185185185e-01   # 16 / 135
+RK5X3 = 5.189863547758284e-01    # 6656 / 12825
+RK5X4 = 5.061314903420167e-01     # 28561 / 56430
+RK5X5 = -1.80000000000000e-01  # -9 / 50
+RK5X6 = 3.636363636363636e-02   #2 / 55
+
+r1  =   2.777777777777778e-03  #  1/360
+r3  =  -2.994152046783626e-02  # -128/4275
+r4  =  -2.919989367357789e-02  # -2197/75240
+r5  =   2.000000000000000e-02  #  1/50
+r6  =   3.636363636363636e-02  #  2/55
+
+def CheckToStop(rho, T, M, drho):
+    kappa = Kappa(rho, T)
+    deltaTau = kappa * rho ** 2.0 / abs(drho)
+    #print(deltaTau)
+    if deltaTau < 0.01:  # @@@@@@@@this is just a placeholder!!!!@@@@@@@
+        return False, deltaTau
+    
+    if M > 1e3 * M_s:
+        return False, deltaTau
+
+    return True, deltaTau
+
+
+def extendArray(arrayToExtend,dimensions):
+    extender = np.zeros(dimensions)
+    arrayToExtend = np.column_stack((arrayToExtend,extender))
+    return arrayToExtend
+
+def getStepsize(r,h_0):
+    stepsize=[h_0]
+    for idx,step in enumerate(r):
+        if idx!=0:
+            stepsize.append(r[idx]-r[idx-1])
+    return stepsize
+
+def FindSurfaceTauIndex(tauList):
+    sumTauchanges=0
+    reversedList=list(reversed(tauList)) # we count back from the last index
+    i=0
+    print(tauList)
+    while sumTauchanges<(2/3): # while the sum is less then what we want
+        sumTauchanges+=reversedList[i]
+        i=i+1    
+    return i-1 # Bc of the while loopit itterates up 1 even after the sum reaches what we wanted, so we reverse that last increase
+
+def MakeDerivitaves(vals, currentR, i, listofK):
+    KTermsrho = np.sum(listofK[:, 0])
+    KTermsT = np.sum(listofK[:, 1])
+    KTermsM = np.sum(listofK[:, 2])
+    KTermsL = np.sum(listofK[:, 3])
+
+    
+    rho = vals[0, i] + KTermsrho
+    T = vals[1, i] + KTermsT
+    M = vals[2, i] + KTermsM
+    L = vals[3, i] + KTermsL  
+
+    kappa = Kappa(rho, T)
+    epsilon = Epsilon(rho, T)
+    pressure = Pressure(rho, T)
+    dpdt = DelPressuredelT(rho, T)
+    dpdrho = DelPressureDelrho(rho, T)
+
+    dTau = DTauDr(kappa, rho)
+    dL = DLDr(currentR, rho, epsilon)
+    dM = DMDr(currentR, rho)
+    dT = DTDr(currentR, rho, T, L, M, kappa, pressure)
+    dRho = DRhoDr(currentR, rho, M, kappa, dpdrho, dpdt, dT)
+    derivitaves = np.array([dRho, dT, dM, dL, dTau])
+    return derivitaves
+
+def RK45(r_0, h_0, vals, minError, maxError, hmin, hmax, abort):
+    
+    # merge the functions
+    i = 0  # itter counter
+    dL=[0]
+    r = [r_0]  # initial r   next r is r+h
+    h = h_0
+    errorList = []
+    keepGoing = True
+    zero = np.array([0., 0., 0., 0., 0.])
+    vals = extendArray(vals,(5,1000))
+    kappa = [Kappa(vals[0,0],vals[1, 0])]
+    delP = [DelPressuredelT(vals[0,0],vals[1, 0])]
+    tauChanges= []
+    
+    while keepGoing and i < abort:
+
+        if h < hmin:
+            h = hmin
+            
+        elif h > hmax:
+            h = hmax
+
+        derivitaves = MakeDerivitaves(vals, r[i], i,
+                                      np.array([zero, zero, zero, zero, zero]))  # keep this becuase its usefull later
+        K1 = h * derivitaves
+
+        K2 = h * MakeDerivitaves(vals, r[i] + RKK2R * h, i,
+                                 np.array([RK21 * K1, zero, zero, zero, zero]))
+        
+        K3 = h * MakeDerivitaves(vals, r[i] + RKK3R * h, i,
+                                 np.array([RK31 * K1, RK32 * K2, zero, zero, zero]))
+
+        K4 = h * MakeDerivitaves(vals, r[i] + RKK4R * h, i,
+                                 np.array([RK41 * K1, RK42 * K2, RK43 * K3, zero, zero]))
+
+        K5 = h * MakeDerivitaves(vals, r[i] + RKK5R * h, i,
+                                 np.array([RK51 * K1, RK52 * K2, RK53 * K3, RK54 * K4, zero]))
+
+        K6 = h * MakeDerivitaves(vals, r[i] + RKK6R * h, i,
+                                 np.array([RK61 * K1, RK62 * K2, RK63 * K3, RK64 * K4, RK65 * K5]))
+        
+        RK4XSSumKVals = (RK4X1 * K1 + RK4X3 * K3 + RK4X4 * K4 + RK4X5 * K5)
+        
+        RK5XSSumKVals = (RK5X1 * K1 + RK5X3 * K3 + RK5X4 * K4 + RK5X5 * K5 + RK5X6 * K6)
+       
+        RK4X = vals[:, i] +  RK4XSSumKVals
+
+        RK5X = vals[:, i] + RK5XSSumKVals
+        
+        errorlist = abs((RK4XSSumKVals - RK5XSSumKVals)/RK5X)
+        
+        error = np.max(errorlist)
+        
+        if error > maxError and h > hmin:
+            h = h * min( max( 0.84 * ( maxError / (error + np.finfo(float).eps) )**0.25, 0.5 ), 2 )
+            #h = h * (maxError / error)**.2
+            #h = h / 2
+            h = h
+            continue
+            
+
+        else:
+            vals[:,i+1] = RK4X
+
+            kappa.append(Kappa(RK4X[0],RK4X[1]))
+            delP.append(DelPressuredelT(RK4X[0],RK4X[1]))
+            drhodr = derivitaves[0]
+ 
+            keepGoing, deltaTau = CheckToStop(RK4X[0], RK4X[1], RK4X[2], drhodr)
+            
+            if deltaTau<10:
+                tauChanges.append(RK4XSSumKVals[4]) # this is taking our tau value differences, Not the tau values!
+                
+            dL.append(derivitaves[3])
+            
+            r.append(r[i] + h)
+            i += 1
+            errorList.append(error)
+            
+            if i % 1000 == 0:
+                if i==abort:
+                    pass
+                else:
+                    try:
+                        vals = extendArray(vals,(5,1000))
+                    except:
+                        print('Error: Array could not be extended')      
+                try:
+                    print('Keep Going Criteria: ' + str(deltaTau))
+                    print('Current Step (x1e3): ' + str(i/1000))
+                    print('-------------------------------------')
+                except:
+                    pass
+                        
+            if error < minError:
+                #h = h * (maxError / error)**.2
+                h = h * 2
+    try: 
+        idx = FindSurfaceTauIndex(tauChanges) # find the index FROM THE BACK that the surface is at
+    except:
+        idx = 1
+    vals = vals[:,:-idx]
+    r = r[:-idx]
+#####All possible outputs
+    kappa = kappa[:-idx]
+
+    errorList = errorList[:-idx]
+    dL = dL[:-idx]
+    delP = delP[:-idx]
+#    stepsize = setStepsize(r,h_0)
+
+    return vals, r, dL, kappa, errorList, delP, tauChanges
+
+
+rho_c = 5.8556e5
+T_c = 8.23544e+06
+    
+#rho_c = 77746.6 # 1 magnitude larger then stated
+#T_c = 2e+07 # idx1: T
+
+r_0 = 10000
+M_0 = 4.0 * np.pi * r_0 ** 3.0 * rho_c / 3.0  # idx2: M
+L_0 = 4.0 * np.pi * r_0 ** 3.0 * rho_c * Epsilon(rho_c, T_c) / 3.0  # idx3: L
+
+
+# initialiize the vals array
+values = np.zeros((5, 1))   
+values[0] = rho_c           # idx0: rho
+values[1] = T_c             # idx1: T
+values[2] = M_0             # idx2: M
+values[3] = L_0             # idx3: L
+
+
+# make maximum error 5% to the previous value IE if T=1e6, the max allowed error is a 1% difference
+# make minimum error 0.1%
+
+maxError = 1E-15
+minError = 1E-20
+hmin = 10
+hmax = 75000
+h_0 = 5000
+
+
+vals, r, dL, kappa, errors, delP, tauChanges = RK45(r_0, h_0, values, minError, maxError , hmin, hmax, 30000)
+
+#print(tauChanges)
+vals=vals[:,:len(r)]
+errors.append(errors[-1])
+
+#@@@@@@@ Abort variable must be greater then and divisible by 10000 @@@@@@
+stepsize=[h_0]
+for idx,step in enumerate(r):
+    if idx!=0:
+        stepsize.append(r[idx]-r[idx-1])
+#print(stepsize)
+maxr=np.max(r)
+
+xaxis=r/maxr
+fig, axs = plt.subplots(2, 3, sharex=True, frameon=False, figsize=(10, 5))
+axs[0, 0].plot(xaxis, vals[0, :]/rho_c, 'k-')
+axs[0, 0].set_title('Density (rho/rho_c)', fontsize=8)
+axs[0, 1].plot(xaxis, vals[1, :]/T_c, 'k-')
+axs[0, 1].set_title('Temperature (T/T_c)', fontsize=8)
+axs[0, 2].plot(xaxis, vals[2, :]/np.max(vals[2,:]), 'k-')
+axs[0, 2].set_title('Mass (M/M_max)', fontsize=8)
+axs[1, 0].plot(xaxis, dL, 'k-')
+axs[1, 0].set_title('Derivitave of Luminosity', fontsize=8)
+axs[1, 1].plot(xaxis, np.log(delP), 'k-')
+axs[1, 1].set_title('Kappa', fontsize=8)
+axs[1, 1].set_yscale('log')
+axs[1, 2].plot(xaxis, stepsize, 'k-')
+axs[1, 2].set_title('errors', fontsize=8)
+axs[1, 2].set_yscale('log')
+
+#plt.xscale('log')
+
+plt.rcParams.update({'font.size': 8})
+plt.tight_layout()
+plt.show()
+
+print('Max Radius: ' + str(maxr))
+print('Min Temp: ' + str(np.min(vals[1,:])))
+print('Max Mass: ' + str(np.max(vals[2,:])))
+
+
+
+
+print("--- %s Minutes ---" % str(int(time.time() - start_time)/60))
+
+
