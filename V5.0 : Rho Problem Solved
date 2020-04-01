@@ -1,4 +1,5 @@
 
+
 """
 Created on Fri Mar 20 22:59:31 2020
 @author: matthewsmith
@@ -441,12 +442,11 @@ def BisectionRootSolver(negativeEnd,positiveEnd,centralTemp,inputs,precision):
     rho_Converge_Catch = 1 # if the endpoints are 1 kg/m^3 away from eachothre, its not gona converge
     maxItterations = 50
     bestSolution = [500000,0,0]
+    bestHalfWayPoint = 0
     i = 0
     while i < maxItterations:
         print('itteration For Root Solver: ' + str(i))
         print('Best Diff in L: ',bestSolution[0])
-
-
         
         lowerLdif, vals, r = RunRK45ToGetL(negativeEnd,inputs,centralTemp)
         upperLdif, vals, r = RunRK45ToGetL(positiveEnd,inputs,centralTemp)
@@ -486,10 +486,16 @@ def BisectionRootSolver(negativeEnd,positiveEnd,centralTemp,inputs,precision):
 
         if abs(middleL) < abs(bestSolution[0]):
             bestSolution = [middleL, vals, r]
+            bestHalfWayPoint = halfWayPoint
             
-        if Endpointdif <  rho_Converge_Catch or abs(middleL) < precision:
+        if abs(middleL) < precision:
             print(' Found a solution with L difference: ' + str(middleL))
             return vals, r
+        
+        if Endpointdif <  rho_Converge_Catch:
+            if abs(halfWayPoint - bestHalfWayPoint) < 10:
+                print(' Found a solution with L difference: ' + str(bestSolution[0]))
+                return bestSolution[1],bestSolution[2]
         
         elif lowerLdif * middleL < 0:
            positiveEnd = halfWayPoint 
@@ -501,7 +507,7 @@ def BisectionRootSolver(negativeEnd,positiveEnd,centralTemp,inputs,precision):
             
         else:
             print("No optimal solution found - L condition of returned value: ")
-            return None,None # return none so that the error catch can skip the star
+            return None, None # return none so that the error catch can skip the star
         
     print ('maximum itterations reached: Optimal solution returned')
     
@@ -546,9 +552,9 @@ inputs =  {'r_0' : r_0,
 
 
 
-numstars = 1
+numstars = 2
 T_c = np.linspace(1e6,1e7,numstars)
-T_c = [2e+07]
+T_c = [8.23544e+06,2e+07]
 Stars = np.zeros((2,numstars))       
 i = 0    
 while i <= numstars-1:
@@ -564,10 +570,18 @@ while i <= numstars-1:
     T_surface = vals[1,-1] # Temperature at the surface
     R_surface = r[-1] # Location of the surface     # negative idx because we were counting backwards
     L_surface = vals[3,-1]# Luminosity at the surface
-    print("!!Star found with R Surface: " + str(R_surface) + '\n')
-    print('new rho_c: ' + str(rho_c))
+    Star_Mass = vals[2,-1]
     Stars[0, i] = L_surface # Luminosity of particular star added to list of stars
     Stars[1, i] = T_surface # Temperature of particular star added to list of stars
+
+    print("!!Star found!!!")
+    print("R Surface: ", R_surface)
+    print("L Surface: ", L_surface)
+    print("T Surface: ", T_surface)
+    print("Mass: ", Star_Mass)
+    print('\n')
+ #   print('new rho_c: ' + str(rho_c))
+
     
     i+=1
             
