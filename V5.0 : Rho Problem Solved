@@ -1,5 +1,4 @@
 
-
 """
 Created on Fri Mar 20 22:59:31 2020
 @author: matthewsmith
@@ -495,7 +494,9 @@ def BisectionRootSolver(negativeEnd,positiveEnd,centralTemp,inputs,precision):
         if Endpointdif <  rho_Converge_Catch:
             if abs(halfWayPoint - bestHalfWayPoint) < 10:
                 print(' Found a solution with L difference: ' + str(bestSolution[0]))
-                return bestSolution[1],bestSolution[2]
+                return bestSolution[1], bestSolution[2]
+            else:
+                return vals, r
         
         elif lowerLdif * middleL < 0:
            positiveEnd = halfWayPoint 
